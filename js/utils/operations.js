@@ -1,4 +1,4 @@
-const operators = new Map([
+export const operators = new Map([
     [
         "+",
         {
@@ -69,7 +69,7 @@ const operators = new Map([
     ],
 ]);
 
-const functions = new Map([
+export const functions = new Map([
     ["sin", { arity: 1, execute: (x) => Math.sin(x) }],
     ["cos", { arity: 1, execute: (x) => Math.cos(x) }],
     ["tan", { arity: 1, execute: (x) => Math.tan(x) }],
@@ -104,7 +104,7 @@ const functions = new Map([
     ["sqr-root", { arity: 1, execute: (x) => Math.sqrt(x) }],
 ]);
 
-function factorial(num) {
+export function factorial(num) {
     if (num <= 1) {
         return 1;
     } else {
