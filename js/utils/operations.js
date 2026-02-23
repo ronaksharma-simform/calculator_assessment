@@ -67,6 +67,20 @@ export const operators = new Map([
             execute: (a) => factorial(a),
         },
     ],
+    [
+        "%",
+        {
+            precedence: 2,
+            associativity: "left",
+            arity: 2,
+            execute: (a, b) => {
+                if (b === 0) {
+                    throw new Error("Operator % : Modulo by Zero not allowed");
+                }
+                return a % b;
+            },
+        },
+    ],
 ]);
 
 export const functions = new Map([
@@ -103,7 +117,7 @@ export const functions = new Map([
             precedence: 6
         },
     ],
-    ["sqr-root", { arity: 1, execute: (x) => Math.sqrt(x), precedence: 6 }],
+    ["sqrt", { arity: 1, execute: (x) => Math.sqrt(x), precedence: 6 }],
 ]);
 
 export function factorial(num) {
