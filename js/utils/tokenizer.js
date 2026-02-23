@@ -33,7 +33,7 @@ export default function tokenParser(input) {
                         tokens[tokens.length - 1] != "!") ||
                     tokens[tokens.length - 1] === "("
                 ) {
-                    console.log("NEG");
+                    tokens.push("NEG")
                     continue;
                 }
             }
