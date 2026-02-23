@@ -1,3 +1,6 @@
+import infixToPostfix from "./utils/infixToPostfix.js";
+import postfixEvaluation from "./utils/postfixEvaluation.js";
+import tokenParser from "./utils/tokenizer.js";
 let themeBtn = document.getElementById("themeBtn");
 let themeIcon = document.getElementsByClassName("theme-icon")[0];
 let body = document.getElementsByTagName("body")[0];
@@ -21,7 +24,10 @@ numberBtn.addEventListener("click", (event) => {
         } else if (currentTargetElement.dataset.action == "calculate") {
             try {
                 let temp = eval(currentDisplay.textContent);
-                currentDisplay.textContent = temp;
+                let tokens = tokenParser(currentDisplay.textContent)
+                let postfixExpression = infixToPostfix(tokens)
+                let result = postfixEvaluation(postfixExpression)
+                currentDisplay.textContent = result;
             } catch (error) {
                 currentDisplay.textContent = error.message;
             }
