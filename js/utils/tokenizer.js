@@ -1,4 +1,4 @@
-import { operators } from "./operations.js";
+import { operators, functions } from "./operations.js";
 
 export default function tokenParser(input) {
     const tokens = [];
@@ -6,7 +6,6 @@ export default function tokenParser(input) {
     let currentDecimal = false;
 
     for (let key of input) {
-
         if (key === " ") continue;
         if (/\d/.test(key)) {
             currentOperand += key;
@@ -18,13 +17,25 @@ export default function tokenParser(input) {
                 currentOperand += ".";
                 currentDecimal = true;
             } else {
-                throw new Error("Invalid Expression : You cant have more than one decimal point in operand");
+                throw new Error(
+                    "Invalid Expression : You cant have more than one decimal point in operand",
+                );
             }
         } else if (operators.has(key)) {
             if (currentOperand !== "") {
                 tokens.push(currentOperand);
                 currentOperand = "";
                 currentDecimal = false;
+            } else if (key == "-") {
+                if (
+                    tokens.length == 0 ||
+                    (operators.has(tokens[tokens.length - 1]) &&
+                        tokens[tokens.length - 1] != "!") ||
+                    tokens[tokens.length - 1] === "("
+                ) {
+                    console.log("NEG");
+                    continue;
+                }
             }
             tokens.push(key);
         }
@@ -33,7 +44,9 @@ export default function tokenParser(input) {
         else if (key === "(") {
             if (currentOperand !== "") {
                 tokens.push(currentOperand);
-                tokens.push("*");
+                if (!functions.has(currentOperand)) {
+                    tokens.push("*");
+                }
                 currentOperand = "";
             }
             tokens.push("(");
@@ -57,7 +70,10 @@ export default function tokenParser(input) {
         tokens.push(currentOperand);
     }
 
-    if (operators.has(tokens[tokens.length - 1])) {
+    if (
+        operators.has(tokens[tokens.length - 1]) &&
+        tokens[tokens.length - 1] != "!"
+    ) {
         throw new Error("Invalid Expression : expression didnt ends with operator");
     }
 
