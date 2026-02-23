@@ -108,8 +108,14 @@
                     <!-- Row 8: Numbers (0) & Decimal -->
                     <div class="button-row">
                         <button class="btn btn-number btn-zero" data-number="0">0</button>
-                        <button class="btn btn-number" data-number=".">.</button>
+
+                        <button class="btn btn-function" data-function="(">(</button>
+                        <button class="btn btn-function" data-function=")">)</button>
+                    </div>
+                    <div class="button-row">
                         <button class="btn btn-equals" data-action="calculate">=</button>
+
+                        <button class="btn btn-number" data-number=".">.</button>
                     </div>
                 </div>
 
@@ -135,6 +141,6 @@
     </div>
 
     <script type="module" src="./js/script.js"></script>
-    <script type="module" src="./js/utils/operations.js"></script>
+    <!-- <script type="module" src="./js/utils/operations.js"></script> -->
   </body>
 </html>
