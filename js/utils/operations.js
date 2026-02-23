@@ -70,9 +70,9 @@ export const operators = new Map([
 ]);
 
 export const functions = new Map([
-    ["sin", { arity: 1, execute: (x) => Math.sin(x) }],
-    ["cos", { arity: 1, execute: (x) => Math.cos(x) }],
-    ["tan", { arity: 1, execute: (x) => Math.tan(x) }],
+    ["sin", { arity: 1, execute: (x) => Math.sin(x), precedence: 6 }],
+    ["cos", { arity: 1, execute: (x) => Math.cos(x), precedence: 6 }],
+    ["tan", { arity: 1, execute: (x) => Math.tan(x), precedence: 6 }],
     [
         "log",
         {
@@ -85,6 +85,7 @@ export const functions = new Map([
                 }
                 return Math.log10(x);
             },
+            precedence: 6
         },
     ],
     [
@@ -99,9 +100,10 @@ export const functions = new Map([
                 }
                 return Math.log(x);
             },
+            precedence: 6
         },
     ],
-    ["sqr-root", { arity: 1, execute: (x) => Math.sqrt(x) }],
+    ["sqr-root", { arity: 1, execute: (x) => Math.sqrt(x), precedence: 6 }],
 ]);
 
 export function factorial(num) {
