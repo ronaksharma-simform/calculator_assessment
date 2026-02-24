@@ -7,8 +7,11 @@ import TokenParser from "./utils/tokenizer.js";
 const tokenParser = new TokenParser(operators, functions);
 const postfixEvaluater = new PostfixEvaluator(operators, functions);
 const infixToPostfix = new InfixtoPostfix(operators, functions);
+let overWrite = false;
+let prev_calculations = [];
 // Calculator class instance
 const calc = new Calculator(tokenParser, infixToPostfix, postfixEvaluater);
+prev_calculations = calc.getHistory();
 
 // element selectors
 let themeBtn = document.getElementById("themeBtn");
@@ -17,7 +20,9 @@ let body = document.getElementsByTagName("body")[0];
 let currentDisplay = document.getElementById("currentDisplay");
 let historyDisplay = document.getElementById("historyDisplay");
 let numberBtn = document.getElementsByClassName("calculator-wrapper")[0];
-
+let clearHistoryBtn = document.getElementById("clearHistoryBtn");
+let historyList = document.getElementById("historyList");
+let emptyHistoryMessage = document.getElementsByClassName("empty")[0];
 // Dark theme toggle Event Listener
 themeBtn.addEventListener("click", (event) => {
 	console.log("Dark Theme Event Listener");
@@ -26,8 +31,24 @@ themeBtn.addEventListener("click", (event) => {
 		? (themeIcon.innerHTML = "🌙")
 		: (themeIcon.innerHTML = "☀️");
 });
+// clear history event listener
+clearHistoryBtn.addEventListener("click", () => {
+	calc.clearHistory();
+	prev_calculations = [];
+	historyList.innerHTML = "";
+	emptyHistoryMessage.style.display = "block";
+	historyList.append(emptyHistoryMessage);
+});
+if (!prev_calculations.length === 0) {
+	// addHistoryItem(historyDisplay.textContent);
+}
+intialRender();
 // Event listener for taking user input expression
 numberBtn.addEventListener("click", (event) => {
+	if (overWrite == false) {
+		currentDisplay.textContent = "";
+		overWrite = true;
+	}
 	// accessing current target element
 	let currentTargetElement = event.target;
 	let characterToAdd = "";
@@ -66,11 +87,18 @@ function handleActionInput(currentTargetElement, currentExpression) {
 	if (currentAction === "clear") {
 		currentExpression = "";
 	} else if (currentAction === "delete") {
-		currentExpression=currentExpression.slice(0,currentExpression.length-1)
+		currentExpression = currentExpression.slice(
+			0,
+			currentExpression.length - 1
+		);
 	} else if (currentAction == "calculate") {
 		currentExpression = calculateExpression(currentExpression);
+		calc.setHistory(historyDisplay.textContent);
+		addHistoryItem(historyDisplay.textContent);
 	} else if (currentAction == "reciprocal") {
 		currentExpression = calculateReciprocal(currentExpression);
+		calc.setHistory(historyDisplay.textContent);
+		addHistoryItem(historyDisplay.textContent);
 	} else {
 	}
 	return currentExpression;
@@ -78,8 +106,10 @@ function handleActionInput(currentTargetElement, currentExpression) {
 function calculateExpression(expression) {
 	try {
 		let result = calc.evaluate(expression);
+		historyDisplay.innerHTML = expression + " = " + result;
 		return result;
 	} catch (error) {
+		historyDisplay.innerHTML = "";
 		return error.message;
 	}
 }
@@ -90,8 +120,29 @@ function calculateReciprocal(expression) {
 			throw new Error("Invalid Expression : Cant divide by Zero");
 		let str = "1/" + result;
 		result = eval(str);
+		historyDisplay.textContent= " 1 / " + historyDisplay.textContent;
 		return result;
 	} catch (error) {
+		historyDisplay.innerHTML = "";
 		return error.message;
+	}
+}
+function addHistoryItem(expression) {
+	if (historyList.firstElementChild === emptyHistoryMessage) {
+		emptyHistoryMessage.style.display = "none";
+	}
+	let historyItem = document.createElement("p");
+	historyItem.textContent = expression;
+	historyItem.setAttribute("class", "history-item");
+	historyList.appendChild(historyItem);
+}
+function intialRender() {
+	if (prev_calculations.length === 0) {
+		emptyHistoryMessage.style.display = "block";
+	} else {
+		emptyHistoryMessage.style.display = "none";
+		prev_calculations.forEach((expression) => {
+			addHistoryItem(expression);
+		});
 	}
 }
