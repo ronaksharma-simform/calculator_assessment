@@ -11,6 +11,7 @@ export default class Calculator {
 		this.#history = [];
 	}
 	evaluate(expression) {
+		
 		const tokens=this.#tokenizer.tokenParser(expression);
         const postfix=this.#parser.convert(tokens);
         const result = this.#evaluator.evaluate(postfix);
