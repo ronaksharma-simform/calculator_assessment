@@ -23,6 +23,7 @@ let numberBtn = document.getElementsByClassName("calculator-wrapper")[0];
 let clearHistoryBtn = document.getElementById("clearHistoryBtn");
 let historyList = document.getElementById("historyList");
 let emptyHistoryMessage = document.getElementsByClassName("empty")[0];
+
 // Dark theme toggle Event Listener
 themeBtn.addEventListener("click", (event) => {
 	console.log("Dark Theme Event Listener");
@@ -42,6 +43,33 @@ clearHistoryBtn.addEventListener("click", () => {
 if (!prev_calculations.length === 0) {
 	// addHistoryItem(historyDisplay.textContent);
 }
+// adding keyboard listener for taking input for keyboard
+body.addEventListener(("keydown"),(event)=>{
+	let currentKeyboardKey=event.key
+	if(currentKeyboardKey.match(/[0-9+\/*-]/) ){	
+		currentDisplay.innerHTML+=event.key
+		console.log(event.key) 
+	}
+	else if(currentKeyboardKey.toLowerCase()==="c"){
+		currentDisplay.textContent = handleActionInput(
+				"clear",
+				currentDisplay.textContent
+			);	
+	}
+	else if(currentKeyboardKey==="Enter"){
+		currentDisplay.textContent = handleActionInput(
+				"calculate",
+				currentDisplay.textContent
+			);	
+	}
+	else{
+		currentDisplay.textContent = handleActionInput(
+				"delete",
+				currentDisplay.textContent
+			);	
+	}
+	event.stopPropagation();
+})
 intialRender();
 // Event listener for taking user input expression
 numberBtn.addEventListener("click", (event) => {
@@ -61,7 +89,7 @@ numberBtn.addEventListener("click", (event) => {
 			characterToAdd = handleFunctionInput(currentTargetElement);
 		} else if (currentTargetElement.dataset.action) {
 			currentDisplay.textContent = handleActionInput(
-				currentTargetElement,
+				currentTargetElement.dataset.action,
 				currentDisplay.textContent
 			);
 		}
@@ -82,8 +110,7 @@ function handleFunctionInput(currentTargetElement) {
 	}
 	return funcToAdd;
 }
-function handleActionInput(currentTargetElement, currentExpression) {
-	let currentAction = currentTargetElement.dataset.action;
+function handleActionInput(currentAction, currentExpression) {
 	if (currentAction === "clear") {
 		currentExpression = "";
 	} else if (currentAction === "delete") {
@@ -146,3 +173,4 @@ function intialRender() {
 		});
 	}
 }
+
