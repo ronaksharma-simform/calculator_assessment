@@ -43,7 +43,7 @@ export class InfixtoPostfix {
 			output.push(st.pop());
 		}
 		if (!st.isEmpty()) {
-			throw new Error("Invalid Expression : Mismatched parentheses");
+			throw new Error("Invalid Expression ");
 		}
 		console.log(output);
 		return output;
