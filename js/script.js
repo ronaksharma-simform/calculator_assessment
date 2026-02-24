@@ -44,32 +44,29 @@ if (!prev_calculations.length === 0) {
 	// addHistoryItem(historyDisplay.textContent);
 }
 // adding keyboard listener for taking input for keyboard
-body.addEventListener(("keydown"),(event)=>{
-	let currentKeyboardKey=event.key
-	if(currentKeyboardKey.match(/[0-9+\/*-]/) ){	
-		currentDisplay.innerHTML+=event.key
-		console.log(event.key) 
-	}
-	else if(currentKeyboardKey.toLowerCase()==="c"){
+body.addEventListener("keydown", (event) => {
+	let currentKeyboardKey = event.key;
+	if (currentKeyboardKey.match(/[0-9+\/*-]/)) {
+		currentDisplay.innerHTML += event.key;
+		console.log(event.key);
+	} else if (currentKeyboardKey.toLowerCase() === "c") {
 		currentDisplay.textContent = handleActionInput(
-				"clear",
-				currentDisplay.textContent
-			);	
-	}
-	else if(currentKeyboardKey==="Enter"){
+			"clear",
+			currentDisplay.textContent
+		);
+	} else if (currentKeyboardKey === "Enter") {
 		currentDisplay.textContent = handleActionInput(
-				"calculate",
-				currentDisplay.textContent
-			);	
-	}
-	else{
+			"calculate",
+			currentDisplay.textContent
+		);
+	} else {
 		currentDisplay.textContent = handleActionInput(
-				"delete",
-				currentDisplay.textContent
-			);	
+			"delete",
+			currentDisplay.textContent
+		);
 	}
 	event.stopPropagation();
-})
+});
 intialRender();
 // Event listener for taking user input expression
 numberBtn.addEventListener("click", (event) => {
@@ -114,19 +111,30 @@ function handleActionInput(currentAction, currentExpression) {
 	if (currentAction === "clear") {
 		currentExpression = "";
 	} else if (currentAction === "delete") {
-		currentExpression = currentExpression.slice(
-			0,
-			currentExpression.length - 1
-		);
+		// checking if any sin log cos or other function comes
+		let idxTillSlice = currentExpression.length - 1;
+		if (currentExpression[currentExpression.length - 1].match(/[a-df-z]/)) {
+			for (; idxTillSlice >= 0; idxTillSlice--) {
+				if (currentExpression[idxTillSlice].match(/[^a-df-z]/)) break;
+			}
+			idxTillSlice++;
+		}
+		console.log(currentExpression[idxTillSlice]);
+		currentExpression = currentExpression.slice(0, idxTillSlice);
 	} else if (currentAction == "calculate") {
 		currentExpression = calculateExpression(currentExpression);
-		calc.setHistory(historyDisplay.textContent);
-		addHistoryItem(historyDisplay.textContent);
+		if (historyDisplay.textContent !== "") {
+			calc.setHistory(historyDisplay.textContent);
+			addHistoryItem(historyDisplay.textContent);
+		}
 	} else if (currentAction == "reciprocal") {
 		currentExpression = calculateReciprocal(currentExpression);
-		calc.setHistory(historyDisplay.textContent);
-		addHistoryItem(historyDisplay.textContent);
+		if (historyDisplay.textContent !== "") {
+			calc.setHistory(historyDisplay.textContent);
+			addHistoryItem(historyDisplay.textContent);
+		}
 	} else {
+		currentExpression = toggleSign(currentExpression);
 	}
 	return currentExpression;
 }
@@ -147,7 +155,7 @@ function calculateReciprocal(expression) {
 			throw new Error("Invalid Expression : Cant divide by Zero");
 		let str = "1/" + result;
 		result = eval(str);
-		historyDisplay.textContent= " 1 / " + historyDisplay.textContent;
+		historyDisplay.textContent = " 1 / " + historyDisplay.textContent;
 		return result;
 	} catch (error) {
 		historyDisplay.innerHTML = "";
@@ -173,4 +181,42 @@ function intialRender() {
 		});
 	}
 }
+function toggleSign(expression) {
+	if (!expression) return expression;
 
+	// last part is bracket
+	if (expression.endsWith(")")) {
+		let count = 0;
+
+	for (let i = expression.length - 1; i >= 0; i--) {
+		if (expression[i] === ")") count++;
+		if (expression[i] === "(") count--;
+
+		if (count === 0) {
+			return (
+				expression.slice(0, i) +
+				"-" +
+				expression.slice(i)
+			);
+		}
+	}
+	}
+
+	//  last part is number 
+	let match = expression.match(/(-?\d+\.?\d*)$/);
+	if (match) {
+		let number = match[0];
+
+		let toggled = number.startsWith("-") ? number.slice(1) : "-" + number;
+
+		return expression.slice(0, expression.length - number.length) + toggled;
+	}
+	match = expression.match(/-?[a-z]+\($/);
+	//  last part is function 
+	if (match) {
+		let func = match[0];
+		let toggled = func.startsWith("-") ? func.slice(1) : "-" + func;
+		return expression.slice(0, expression.length - func.length) + toggled;
+	}
+	return expression;
+}
