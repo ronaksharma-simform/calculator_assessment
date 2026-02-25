@@ -7,7 +7,7 @@ export default class PostfixEvaluator {
 	}
 	evaluate(tokens) {
 		if (!Array.isArray(tokens) || tokens.length === 0) {
-			throw new Error("Invalid postfix expression");
+			throw new Error("Invalid expression");
 		}
 		const st = new Stack();
 		for (let token of tokens) {
@@ -19,7 +19,7 @@ export default class PostfixEvaluator {
 					: this.functions.get(token);
 
 				if (st.size() < currentOperator.arity) {
-					throw new Error("Invalid Expression: Insufficient operands");
+					throw new Error("Malformed Expression");
 				}
 
 				for (let i = 0; i < currentOperator.arity; i++) {
@@ -35,7 +35,7 @@ export default class PostfixEvaluator {
 		}
 		console.log(st.peek());
 		if (st.size() !== 1) {
-			throw new Error("Invalid Expression: Too many operands");
+			throw new Error("Malformed Expression");
 		}
 		return st.peek();
 	}

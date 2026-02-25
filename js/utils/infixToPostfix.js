@@ -8,7 +8,7 @@ export class InfixtoPostfix {
 	}
 	convert(tokens) {
 		if (tokens.length === 0) {
-			throw new Error("Invalid Expression: Empty token list");
+			throw new Error("Invalid Expression");
 		}
 		const output = [];
 		const st = new Stack();
@@ -25,9 +25,9 @@ export class InfixtoPostfix {
 			}
 			// Handling closing parenthesis
 			else if (token == ")") {
-                if(st.isEmpty()){
-                    throw new Error("Invalid Expression : Mismatched parentheses");
-                }
+				if (st.isEmpty()) {
+					throw new Error("Invalid Expression : Mismatched parentheses");
+				}
 				while (st.peek() != "(") {
 					output.push(st.pop());
 				}
@@ -38,7 +38,7 @@ export class InfixtoPostfix {
 				output.push(token);
 			}
 		}
-        // pushing remaining operators into expressions
+		// pushing remaining operators into expressions
 		while (!st.isEmpty() && st.peek() !== "(") {
 			output.push(st.pop());
 		}

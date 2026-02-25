@@ -8,6 +8,7 @@ const tokenParser = new TokenParser(operators, functions);
 const postfixEvaluater = new PostfixEvaluator(operators, functions);
 const infixToPostfix = new InfixtoPostfix(operators, functions);
 let overWrite = false;
+let errorFlag = false;
 let prev_calculations = [];
 // Calculator class instance
 const calc = new Calculator(tokenParser, infixToPostfix, postfixEvaluater);
@@ -48,7 +49,6 @@ body.addEventListener("keydown", (event) => {
 	let currentKeyboardKey = event.key;
 	if (currentKeyboardKey.match(/[0-9+\/*-]/)) {
 		currentDisplay.innerHTML += event.key;
-		console.log(event.key);
 	} else if (currentKeyboardKey.toLowerCase() === "c") {
 		currentDisplay.textContent = handleActionInput(
 			"clear",
@@ -70,9 +70,10 @@ body.addEventListener("keydown", (event) => {
 intialRender();
 // Event listener for taking user input expression
 numberBtn.addEventListener("click", (event) => {
-	if (overWrite == false) {
+	if (overWrite == false || errorFlag == true) {
 		currentDisplay.textContent = "";
 		overWrite = true;
+		errorFlag = false;
 	}
 	// accessing current target element
 	let currentTargetElement = event.target;
@@ -119,7 +120,6 @@ function handleActionInput(currentAction, currentExpression) {
 			}
 			idxTillSlice++;
 		}
-		console.log(currentExpression[idxTillSlice]);
 		currentExpression = currentExpression.slice(0, idxTillSlice);
 	} else if (currentAction == "calculate") {
 		currentExpression = calculateExpression(currentExpression);
@@ -145,6 +145,7 @@ function calculateExpression(expression) {
 		return result;
 	} catch (error) {
 		historyDisplay.innerHTML = "";
+		errorFlag = true;
 		return error.message;
 	}
 }
@@ -158,6 +159,7 @@ function calculateReciprocal(expression) {
 		historyDisplay.textContent = " 1 / " + historyDisplay.textContent;
 		return result;
 	} catch (error) {
+		errorFlag = true;
 		historyDisplay.innerHTML = "";
 		return error.message;
 	}
@@ -181,6 +183,7 @@ function intialRender() {
 		});
 	}
 }
+
 function toggleSign(expression) {
 	if (!expression) return expression;
 
@@ -188,21 +191,21 @@ function toggleSign(expression) {
 	if (expression.endsWith(")")) {
 		let count = 0;
 
-	for (let i = expression.length - 1; i >= 0; i--) {
-		if (expression[i] === ")") count++;
-		if (expression[i] === "(") count--;
-
-		if (count === 0) {
-			return (
-				expression.slice(0, i) +
-				"-" +
-				expression.slice(i)
-			);
+		for (let i = expression.length - 1; i >= 0; i--) {
+			if (expression[i] === ")") count++;
+			if (expression[i] === "(") count--;
+			// if their is minus sign remove that
+			if (i != 0 && expression.slice(i - 1).startsWith("-")) {
+				return expression.slice(0, i - 1) + expression.slice(i);
+			}
+			// if thier is no minus than add it
+			if (count === 0) {
+				return expression.slice(0, i) + "-" + expression.slice(i);
+			}
 		}
 	}
-	}
 
-	//  last part is number 
+	//  last part is number
 	let match = expression.match(/(-?\d+\.?\d*)$/);
 	if (match) {
 		let number = match[0];
@@ -212,7 +215,7 @@ function toggleSign(expression) {
 		return expression.slice(0, expression.length - number.length) + toggled;
 	}
 	match = expression.match(/-?[a-z]+\($/);
-	//  last part is function 
+	//  last part is function
 	if (match) {
 		let func = match[0];
 		let toggled = func.startsWith("-") ? func.slice(1) : "-" + func;
