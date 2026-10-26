@@ -45,6 +45,7 @@ It supports both **basic arithmetic** and **advanced scientific functions**.
 ## 🔬 Scientific Functions
 
 - sin(x), cos(x), tan(x)
+- asin(x), acos(x), atan(x) (inverse trigonometric, results in radians)
 - log(x), ln(x)
 - sqrt(x)
 - x^y (power)
