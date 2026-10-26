@@ -88,6 +88,37 @@ export const functions = new Map([
 	["cos", { arity: 1, execute: (x) => Math.cos(x), precedence: 6 }],
 	["tan", { arity: 1, execute: (x) => Math.tan(x), precedence: 6 }],
 	[
+		"asin",
+		{
+			arity: 1,
+			execute: (x) => {
+				if (x < -1 || x > 1) {
+					throw new Error(
+						"Invalid Expression : asin is defined only for values between -1 and 1"
+					);
+				}
+				return Math.asin(x);
+			},
+			precedence: 6,
+		},
+	],
+	[
+		"acos",
+		{
+			arity: 1,
+			execute: (x) => {
+				if (x < -1 || x > 1) {
+					throw new Error(
+						"Invalid Expression : acos is defined only for values between -1 and 1"
+					);
+				}
+				return Math.acos(x);
+			},
+			precedence: 6,
+		},
+	],
+	["atan", { arity: 1, execute: (x) => Math.atan(x), precedence: 6 }],
+	[
 		"log",
 		{
 			arity: 1,
